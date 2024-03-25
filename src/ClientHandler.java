@@ -25,7 +25,7 @@ public class ClientHandler implements Runnable{
     @Override
     public void run() {
 
-        String serverMessage = "سرور:" + clientUsername + " به گروه پیوست";
+        String serverMessage = "سرور`:`" + clientUsername + " به گروه پیوست";
         broadcastMessage(serverMessage);
         if(clientHandlers.size()>1)
             sendMembers();
@@ -35,13 +35,13 @@ public class ClientHandler implements Runnable{
         try {
             while(socket.isConnected()) {
                 messageFromClient = bufferedReader.readLine();
-                String[] destAndMsg = messageFromClient.split(":");
+                String[] destAndMsg = messageFromClient.split("`:`");
                 String destination = destAndMsg[0];
                 if(destination.equals("گروه")){
-                    messageFromClient = "گروه:"+clientUsername+":"+destAndMsg[1];
+                    messageFromClient = "گروه`:`"+clientUsername+"`:`"+destAndMsg[1];
                     broadcastMessage(messageFromClient);
                 }else{
-                    messageFromClient = clientUsername+":"+destAndMsg[1];
+                    messageFromClient = clientUsername+"`:`"+destAndMsg[1];
                     Optional<ClientHandler> dest = clientHandlers.stream().filter(clientHandler ->
                             clientHandler.clientUsername.equals(destination)).findFirst();
                     if(dest.isPresent()){
@@ -50,7 +50,7 @@ public class ClientHandler implements Runnable{
                         dest.get().bufferedWriter.flush();
                     } else {
                         System.out.println("Error to find user: " + destination);
-                        this.bufferedWriter.write(destination + ":این پیام از سمت سرور است. کاربر " + destination + " دیگر وجود ندارد");
+                        this.bufferedWriter.write(destination + "`:`این پیام از سمت سرور است. کاربر " + destination + " دیگر وجود ندارد");
                         this.bufferedWriter.newLine();
                         this.bufferedWriter.flush();
                     }
@@ -102,7 +102,7 @@ public class ClientHandler implements Runnable{
     private void closeEverything(Socket socket, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
         clientHandlers.remove(this);
         System.out.println(clientUsername + " left the group");
-        String serverMessage = "سرور:" + clientUsername + " گروه را ترک کرد";
+        String serverMessage = "سرور`:`" + clientUsername + " گروه را ترک کرد";
         broadcastMessage(serverMessage);
         try {
             if (bufferedReader != null)
